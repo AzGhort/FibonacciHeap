@@ -43,7 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BidirectionalCyclicLinkedList.cs" />
+    <Compile Include="LinkedList.cs" />
     <Compile Include="FibonacciHeap.cs" />
     <Compile Include="IO.cs" />
     <Compile Include="Node.cs" />

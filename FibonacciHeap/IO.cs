@@ -21,11 +21,13 @@ namespace FibonacciHeap
         int totalDK = 0;
         int totalMin = 0;
         bool naive;
+
         public HeapTester(string output, bool n)
         {
             writer = new StreamWriter(output);
             naive = n;
         }
+
         public void CreateHeap()
         {
             using (StreamReader reader = new StreamReader("in.txt"))
@@ -37,6 +39,7 @@ namespace FibonacciHeap
                 }
             }
         }
+       
         /// <summary>
         /// Executes one command from the input.
         /// </summary>
@@ -78,8 +81,9 @@ namespace FibonacciHeap
                     if (Heap.LastOperationSteps > MaxDecreaseKeySteps) { MaxDecreaseKeySteps = Heap.LastOperationSteps; }
                     break;
             }
-            //Heap.Roots.Validate(int.MinValue, null);
+            Heap.Roots.Validate(int.MinValue, null);
         }
+       
         /// <summary>
         /// Outputs info about the heap built to the output file.
         /// </summary>

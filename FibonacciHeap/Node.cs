@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 
 namespace FibonacciHeap
 {
+    /// <summary>
+    /// Node of the heap/linked list.
+    /// </summary>
+    /// <typeparam name="T">Identifier of node.</typeparam>
+    /// <typeparam name="E">Key (priority) of node.</typeparam>
     class Node<T, E> where T : IEquatable<T>
                      where E : IComparable<E>
     {
@@ -16,6 +21,7 @@ namespace FibonacciHeap
         public bool LostSon { get; set; } = false;
         public int Order { get { return Children.NodesCount; } }
         #endregion
+
         #region Structure pointers
         public Node<T, E> Left { get; set; }
         public Node<T, E> Right { get; set; }
@@ -29,15 +35,22 @@ namespace FibonacciHeap
             Key = key;
         }
 
+        #region Methods
+        /// <summary>
+        /// Inserts given node as next, sets it's succesor to null.
+        /// </summary>
+        /// <param name="right">Next node.</param>
         public void InsertRight(Node<T, E> right)
         {
-            Debug.Assert(Right == null);
-
             right.Right = null;
             right.Left = this;
             Right = right;
         }
 
+        /// <summary>
+        /// Destroys the current node, e.g. handles neighbours' pointers.
+        /// </summary>
+        /// <returns>Whether the operation was succesful - e.g. this node is NOT the last node of list.</returns>
         public bool Destroy()
         {
             // we are the last node
@@ -50,48 +63,53 @@ namespace FibonacciHeap
             return true;
         }
 
+        /// <summary>
+        /// Checks whether the node is root (no parent).
+        /// </summary>
+        /// <returns>Whether the node is root.</returns>
         public bool IsRoot()
         {
             return Parent == null;
         }
 
+        /// <summary>
+        /// Sets "root attributes" on this node - parent is null, LostSon is false.
+        /// </summary>
         public void SetRoot()
         {
             Parent = null;
             LostSon = false;
         }
 
+        /// <summary>
+        /// Releases all children of node - sets them all to root.
+        /// </summary>
         public void ReleaseChildren()
         {
-           foreach (var child in Children)
+            foreach (var child in Children)
             {
                 child.SetRoot();
             }
         }
-
+                
+        /// <summary>
+        /// Inserts new node into children of this node.
+        /// </summary>
+        /// <param name="newnode">New node to be inserted.</param>
         public void InsertIntoChildren(Node<T, E> newnode)
         {
             newnode.Parent = this;
             Children.Insert(newnode);
         }
 
+        /// <summary>
+        /// String version of this object.
+        /// </summary>
+        /// <returns>(Identifier, Key)</returns>
         public override string ToString()
         {
             return String.Format("({0},{1})", Identifier, Key);
         }
-
-        public void ValidateNode(E fatherVal, Node<T, E> father, int sonIndex)
-        {
-            Debug.Assert(Parent == father);
-            Debug.Assert(Key.CompareTo(fatherVal) >= 0);
-            if (father == null)
-            {
-                Debug.Assert(!LostSon);
-            }
-            if (Children.Head != null)
-            {
-                Children.Validate(Key, this);
-            }
-        }
+        #endregion
     }
 }

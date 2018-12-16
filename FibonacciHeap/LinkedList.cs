@@ -8,13 +8,23 @@ using System.Threading.Tasks;
 
 namespace FibonacciHeap
 {
-    class LinkedList<T, E> : IEnumerable<Node<T,E>> where T : IEquatable<T>
+    /// <summary>
+    /// Linked list of heap nodes.
+    /// </summary>
+    /// <typeparam name="T">Identifier of nodes.</typeparam>
+    /// <typeparam name="E">Priority (key) of nodes.</typeparam>
+    class LinkedList<T, E> : IEnumerable<Node<T, E>> where T : IEquatable<T>
                                                     where E : IComparable<E>
     {
         public Node<T, E> Head { get; private set; }
         public Node<T, E> Tail { get; private set; }
         public int NodesCount { get; private set; } = 0;
 
+        #region Linked list methods
+        /// <summary>
+        /// Inserts node to linked list.
+        /// </summary>
+        /// <param name="newnode">Node to be inserted.</param>
         public void Insert(Node<T, E> newnode)
         {
             if (Head == null)
@@ -30,12 +40,20 @@ namespace FibonacciHeap
             NodesCount++;
         }
 
+        /// <summary>
+        /// Merges another list to this list.
+        /// </summary>
+        /// <param name="other">List to merge to this list.</param>
         public void Merge(LinkedList<T, E> other)
         {
             NodesCount += other.NodesCount;
             // edge cases
-            if (other.Head == null)  { return; }
-            if (Head == null) { Head = other.Head; }            
+            if (other.Head == null) { return; }
+            if (Head == null)
+            {
+                Head = other.Head;
+                Tail = other.Tail;
+            }
             else
             {
                 other.Head.Left = Tail;
@@ -44,6 +62,10 @@ namespace FibonacciHeap
             }
         }
 
+        /// <summary>
+        /// Safely deletes the given node - e.g. handle pointers, Head/Tail...
+        /// </summary>
+        /// <param name="node">Node to be deleted.</param>
         public void SafeDeleteNode(Node<T, E> node)
         {
             if (node == Head)
@@ -61,7 +83,13 @@ namespace FibonacciHeap
             }
             NodesCount--;
         }
+        #endregion
 
+        #region Standard methods
+        /// <summary>
+        /// String version of this object.
+        /// </summary>
+        /// <returns>(Identifier, Key)->(Identifier, Key)->...</returns>
         public override string ToString()
         {
             StringBuilder b = new StringBuilder();
@@ -73,32 +101,31 @@ namespace FibonacciHeap
             }
             return b.ToString();
         }
-
-        public void Validate(E val, Node<T,E> node)
-        {
-            if (Head == null) return;;
-            int counter = 0;
-            foreach (var curN in this)
-            {
-                counter++;
-                curN.ValidateNode(val, node, counter);
-            }
-            Debug.Assert(counter == NodesCount);
-        }
-
+        
+        /// <summary>
+        /// Enumerator of the linked list.
+        /// </summary>
+        /// <returns>Enumerator of this object.</returns>
         public IEnumerator<Node<T, E>> GetEnumerator()
         {
             var curN = Head;
             while (curN != null)
             {
+                // robust, what if someone messes up current node (e.g. in consolidation)
+                var next = curN.Right;
                 yield return curN;
-                curN = curN.Right;
+                curN = next;
             }
         }
 
+        /// <summary>
+        /// Mandatory IEnumerable method.
+        /// </summary>
+        /// <returns>Enumerator of the list.</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
+        #endregion
     }
 }
